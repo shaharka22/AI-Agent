@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: disasterguard-agent
+    runtime: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m data.pipeline
+    startCommand: python main.py
+    healthCheckPath: /healthz
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_EMBED_MODEL
+        value: gemini-embedding-001

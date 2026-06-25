@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Processed RAG artifacts — regenerate with: python -m data.pipeline
+# (excluded because faiss_index.bin can be large; rag_corpus.json is kept for reference)
+data/processed/faiss_index.bin

@@ -1,0 +1,17 @@
+ IMPORT pandas==2.2.2
+DATA_URL = "https://docs.google.com/spreadsheets/d/1sMIgSSGTZjezk8OGBDrY94viR-EH4BXk/export?format=csv"
+
+def search_disasters_by_city(city_name):
+    df = pd.read_csv(DATA_URL)
+    result = df[df['City'].str.contains(city_name, na=False)]
+    return result.to_string() if not result.empty else "לא נמצאו נתונים."
+
+flask>=2.3.0
+google-genai>=1.0.0
+requests>=2.31.0
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
+faiss-cpu>=1.7.4
+python-dotenv>=1.0.0
+tenacity>=8.2.0
