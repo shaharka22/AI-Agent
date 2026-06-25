@@ -13,32 +13,6 @@ session id משלו (cookie), כדי שכמה משתמשים יוכלו לדבר
 import logging
 import os
 import uuid
-import pandas as pd
-
-DATA_URL = "https://docs.google.com/spreadsheets/d/1sMIgSSGTZjezk8OGBDrY94viR-EH4BXk/export?format=csv"
-
-def get_disaster_data():
-    try:
-        df = pd.read_csv(DATA_URL)
-        return df
-    except Exception as e:
-        print(f"שגיאה בטעינת הנתונים מהקישור: {e}")
-        return None
-
-def search_disasters_by_city(city_name):
-    df = get_disaster_data()
-    if df is not None:
-        # סינון לפי שם עיר (מתעלם מרישיות כמו אותיות גדולות/קטנות)
-        result = df[df['City'].str.contains(city_name, na=False)]
-        if not result.empty:
-            return result
-        else:
-            return f"לא נמצאו נתונים עבור העיר {city_name}."
-    return "לא ניתן לגשת לנתונים."
-
-# דוגמה לשימוש בתוך ה-Agent:
-# אם המשתמש שואל "מה קרה בראשון לציון?", ה-Agent יקרא ל:
-# search_disasters_by_city("ראשון לציון")
 
 from flask import Flask, request, jsonify, render_template, make_response
 
