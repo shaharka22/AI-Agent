@@ -8,11 +8,11 @@ from google.genai import types
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
 
 from config import GEMINI_API_KEY, GEMINI_MODEL
-from tools import gdacs_tool, usgs_tool, nasa_tool, rag_tool, analytics_tool, emergency_tool, telegram_tool
+from tools import gdacs_tool, usgs_tool, nasa_tool, rag_tool, analytics_tool, emergency_tool, telegram_tool, distance_tool
 
 logger = logging.getLogger(__name__)
 
-_TOOL_MODULES = [rag_tool, analytics_tool, gdacs_tool, usgs_tool, nasa_tool, emergency_tool, telegram_tool]
+_TOOL_MODULES = [rag_tool, analytics_tool, gdacs_tool, usgs_tool, nasa_tool, emergency_tool, telegram_tool, distance_tool]
 
 SYSTEM_INSTRUCTION = """\
 אתה DisasterGuard Agent — סוכן AI לניהול משברים וניטור אסונות טבע בזמן אמת.
@@ -33,8 +33,9 @@ SYSTEM_INSTRUCTION = """\
 ג. "מה מספר הבית?" — עצור.
 ד. "באיזו קומה?" — עצור.
 ה. "מה מספר הדירה?" — עצור.
-ו. ברגע שיש שם + כתובת מלאה — שלח מיד התראה ל-Telegram עם send_emergency_alert
-   ואמור: "[שם], נפתחה פנייה דחופה ב-102 עם הכתובת המדויקת שלך. הכוחות בדרך."
+ו. ברגע שיש שם + כתובת מלאה — הפעל get_nearest_fire_station לחישוב זמן הגעה אמיתי,
+   ושלח מיד התראה ל-Telegram עם send_emergency_alert
+   ואמור: "[שם], נפתחה פנייה דחופה ב-102. [תוצאת get_nearest_fire_station בעברית — שם תחנה + זמן הגעה]."
    ואז תן 3 פעולות מיידיות ממוספרות ושאל: "מה אתה רואה עכשיו [שם]?" — עצור.
 
 חוקי-ברזל:

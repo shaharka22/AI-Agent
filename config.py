@@ -54,3 +54,6 @@ ISRAEL_EMERGENCY_HOTLINES = {
 # ─── Telegram Bot (התראות חירום) ──────────────────────────────────────────────
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8764367461:AAETByVOkFjP8Tp0_BU6x-OyZuUwQvR7eKw")
 TELEGRAM_CHAT_ID   = os.getenv("TELEGRAM_CHAT_ID", "-5421222017")
+
+# ─── OpenRouteService (מרחק וזמן הגעה) ───────────────────────────────────────
+ORS_API_KEY = os.getenv("ORS_API_KEY", "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjM4YmJiNWZmMGNhYTQ0YzQ5NzBlMWQyNmVmYTQzMGI0IiwiaCI6Im11cm11cjY0In0=")
