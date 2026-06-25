@@ -13,6 +13,7 @@
     --text: #e8eaf0;
     --muted: #8a8f9c;
     --accent: #ef4444;
+    --green: #22c55e;
   }
   * { box-sizing: border-box; }
   body {
@@ -53,6 +54,12 @@
   .msg.user { align-self: flex-start; background: var(--bubble-user); color: white; border-bottom-left-radius: 4px; }
   .msg.agent { align-self: flex-end; background: var(--bubble-agent); border-bottom-right-radius: 4px; }
   .msg.loading { opacity: 0.6; font-style: italic; }
+  .msg.closure {
+    align-self: flex-end;
+    background: #1a2e1a;
+    border: 1px solid var(--green);
+    border-bottom-right-radius: 4px;
+  }
   footer {
     padding: 14px 20px;
     background: var(--panel);
@@ -82,6 +89,15 @@
   }
   button:hover { background: #1d4fd1; }
   button.secondary { background: transparent; color: var(--muted); border: 1px solid #2c3140; }
+  button.confirm-btn {
+    background: var(--green);
+    color: white;
+    margin-top: 10px;
+    width: 100%;
+    font-size: 14px;
+    padding: 10px;
+  }
+  button.confirm-btn:hover { background: #16a34a; }
   .examples { padding: 0 20px 10px; display: flex; flex-wrap: wrap; gap: 8px; }
   .example {
     font-size: 13px; color: var(--muted); border: 1px solid #2c3140; border-radius: 20px;
@@ -118,13 +134,33 @@ const sendBtn = document.getElementById("sendBtn");
 const clearBtn = document.getElementById("clearBtn");
 const examples = document.getElementById("examples");
 
-function addMessage(text, who) {
+function addMessage(text, who, isClosure = false) {
   const div = document.createElement("div");
-  div.className = "msg " + who;
+  div.className = "msg " + who + (isClosure ? " closure" : "");
   div.textContent = text;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
   return div;
+}
+
+function showClosureMessage(text) {
+  const div = addMessage(text, "agent", true);
+
+  const btn = document.createElement("button");
+  btn.className = "confirm-btn";
+  btn.textContent = "✓ הבנתי — סיים שיחה";
+  btn.addEventListener("click", async () => {
+    await clearSession();
+    chat.innerHTML = "";
+    addMessage("השיחה אופסה. אני כאן אם תצטרך עזרה נוספת 🌍", "agent");
+  });
+  div.appendChild(document.createElement("br"));
+  div.appendChild(btn);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function clearSession() {
+  await fetch("/api/clear", { method: "POST" });
 }
 
 async function send(text) {
@@ -141,7 +177,15 @@ async function send(text) {
     });
     const data = await res.json();
     loading.remove();
-    addMessage(data.reply || data.error || "שגיאה לא ידועה.", "agent");
+
+    let reply = data.reply || data.error || "שגיאה לא ידועה.";
+
+    if (reply.includes("##INCIDENT_CLOSED##")) {
+      reply = reply.replace("##INCIDENT_CLOSED##", "").trim();
+      showClosureMessage(reply);
+    } else {
+      addMessage(reply, "agent");
+    }
   } catch (e) {
     loading.remove();
     addMessage("⚠️ שגיאת רשת: " + e, "agent");
@@ -154,7 +198,7 @@ examples.addEventListener("click", (e) => {
   if (e.target.classList.contains("example")) send(e.target.textContent);
 });
 clearBtn.addEventListener("click", async () => {
-  await fetch("/api/clear", { method: "POST" });
+  await clearSession();
   chat.innerHTML = "";
   addMessage("השיחה אופסה.", "agent");
 });
