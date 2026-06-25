@@ -18,11 +18,11 @@ from google.genai import types
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
 
 from config import GEMINI_API_KEY, GEMINI_MODEL
-from tools import gdacs_tool, usgs_tool, nasa_tool, rag_tool, analytics_tool, emergency_tool
+from tools import gdacs_tool, usgs_tool, nasa_tool, rag_tool, analytics_tool, emergency_tool, telegram_tool
 
 logger = logging.getLogger(__name__)
 
-_TOOL_MODULES = [rag_tool, analytics_tool, gdacs_tool, usgs_tool, nasa_tool, emergency_tool]
+_TOOL_MODULES = [rag_tool, analytics_tool, gdacs_tool, usgs_tool, nasa_tool, emergency_tool, telegram_tool]
 
 SYSTEM_INSTRUCTION = """\
 אתה DisasterGuard Agent — סוכן AI לניהול משברים וניטור אסונות טבע (שריפות ורעידות אדמה
@@ -66,6 +66,10 @@ SYSTEM_INSTRUCTION = """\
 9. הישאר ממוקד בתחום אסונות הטבע וניהול משברים. אם השאלה לא קשורה — משפט אחד קצר.
 
 10. תמיד תכתוב בעברית, אלא אם המשתמש כתב באנגלית.
+
+11. אם המשתמש מדווח שלא קיבל מענה ממוקד 102 או 101 — הפעל מיד את send_emergency_alert
+    עם כל הפרטים שנאספו בשיחה (מיקום, סוג אירוע, תפקיד, מצב). הודע למשתמש שנשלחה
+    התראה לצוות הכוננות.
 """
 
 
