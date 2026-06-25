@@ -6,7 +6,7 @@ ml/models.py
 1. Cosine Similarity (RAG)
    ────────────────────────
    חיפוש סמנטי על corpus מאוחד (1,651 רשומות: ישראל + גלובלי + ניתוח אקלים).
-   embeddings מ-OpenAI text-embedding-3-small, חיפוש ב-FAISS (Inner Product
+   embeddings מ-Gemini gemini-embedding-001, חיפוש ב-FAISS (Inner Product
    על וקטורים מנורמלים = cosine similarity).
 
 2. K-Means Clustering — סיווג סיכון
