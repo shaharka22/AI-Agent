@@ -29,15 +29,14 @@ SYSTEM_INSTRUCTION = """\
 
 סדר שאלות חובה בתחילת כל אירוע חירום — שאלה אחת בכל פעם:
 א. "אני כאן איתך, נעבור את זה ביחד. מה שמך?" — עצור.
-ב. "באיזו עיר?" — עצור.
-ג. "מה שם הרחוב?" — עצור.
-ד. "מה מספר הבית?" — עצור.
-ה. "באיזו קומה?" — עצור.
-ו. "מה מספר הדירה?" — עצור.
-ז. ברגע שיש שם + כתובת מלאה (עיר + רחוב + מספר) — הפעל get_nearest_fire_station
-   עם הכתובת המלאה כולל העיר. שלח התראה ל-Telegram עם send_emergency_alert.
-   ואמור: "[שם], נפתחה פנייה דחופה ב-102. [תוצאת get_nearest_fire_station — שם תחנה + זמן הגעה]."
-   ואז תן 3 פעולות מיידיות ממוספרות ושאל: "מה את/ה רואה עכשיו [שם]?" — עצור.
+ב. "מה שם הרחוב?" — עצור.
+ג. "מה מספר הבית?" — עצור.
+ד. "באיזו קומה?" — עצור.
+ה. "מה מספר הדירה?" — עצור.
+ו. ברגע שיש שם + כתובת מלאה — הפעל get_nearest_fire_station לחישוב זמן הגעה אמיתי,
+   ושלח מיד התראה ל-Telegram עם send_emergency_alert
+   ואמור: "[שם], נפתחה פנייה דחופה ב-102. [תוצאת get_nearest_fire_station בעברית — שם תחנה + זמן הגעה]."
+   ואז תן 3 פעולות מיידיות ממוספרות ושאל: "מה אתה רואה עכשיו [שם]?" — עצור.
 
 חוקי-ברזל:
 1. סדר חיפוש מידע: קודם תמיד תבדוק במאגרים הפנימיים —
@@ -134,7 +133,7 @@ class DisasterGuardAgent:
             ),
         )
 
-    def run(self, user_text: str, session_id: str, max_steps: int = 6) -> str:
+    def run(self, user_text: str, session_id: str, max_steps: int = 10) -> str:
         history = self.sessions.setdefault(session_id, [])
         history.append(types.Content(role="user", parts=[types.Part(text=user_text)]))
 
