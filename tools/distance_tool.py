@@ -51,6 +51,33 @@ TOOL_DEFINITION = {
 }
 
 
+# מיקומי ערים ישראליות לfallback מדויק
+CITY_COORDS = {
+    "תל אביב": (32.0853, 34.7818),
+    "חיפה": (32.7940, 34.9896),
+    "ירושלים": (31.7683, 35.2137),
+    "באר שבע": (31.2518, 34.7913),
+    "נתניה": (32.3215, 34.8532),
+    "פתח תקווה": (32.0879, 34.8878),
+    "ראשון לציון": (31.9730, 34.8073),
+    "חולון": (32.0107, 34.7796),
+    "אשדוד": (31.8044, 34.6553),
+    "הרצליה": (32.1663, 34.8438),
+    "רמת גן": (32.0680, 34.8238),
+    "טבריה": (32.7940, 35.5310),
+    "אשקלון": (31.6688, 34.5743),
+    "רחובות": (31.8928, 34.8113),
+    "בת ים": (32.0192, 34.7508),
+    "בני ברק": (32.0840, 34.8340),
+    "כפר סבא": (32.1794, 34.9078),
+    "רמלה": (31.9285, 34.8733),
+    "לוד": (31.9516, 34.8951),
+    "נצרת": (32.6996, 35.3035),
+    "עכו": (32.9236, 35.0680),
+    "אילת": (29.5581, 34.9482),
+}
+
+
 def _geocode(address: str) -> tuple[float, float] | None:
     """ממיר כתובת טקסטואלית לקואורדינטות GPS."""
     try:
@@ -67,10 +94,18 @@ def _geocode(address: str) -> tuple[float, float] | None:
         resp.raise_for_status()
         features = resp.json().get("features", [])
         if not features:
+            # Fallback: חפש לפי שם עיר בלבד
+            for city, coords in CITY_COORDS.items():
+                if city in address:
+                    return coords
             return None
         coords = features[0]["geometry"]["coordinates"]
         return coords[1], coords[0]  # lat, lon
     except Exception:
+        # Fallback לפי עיר
+        for city, coords in CITY_COORDS.items():
+            if city in address:
+                return coords
         return None
 
 
